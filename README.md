@@ -9,7 +9,7 @@ O projeto desenvolvido tem como objetivo propor soluções para bucar os dados s
 #### 1º Liste o maior salário entre todos os funcionários.
 
 Solução:
-```
+```sql
 SELECT SALARIO 
 FROM FUNCIONARIOS F 
 ORDER BY SALARIO DESC LIMIT 1;
@@ -18,7 +18,7 @@ ORDER BY SALARIO DESC LIMIT 1;
 #### 2º Liste o menor salário entre todos os funcionários.
 
 Solução:
-```
+```sql
 SELECT SALARIO 
 FROM FUNCIONARIOS F 
 ORDER BY SALARIO ASC LIMIT 1;
@@ -26,7 +26,7 @@ ORDER BY SALARIO ASC LIMIT 1;
 
 #### 3 º Liste o maior salário entre os Desenvolvedores.
 Solução:
-```
+```sql
 SELECT SALARIO
 FROM FUNCIONARIOS F 
 WHERE EXISTS (
@@ -41,7 +41,7 @@ ORDER BY SALARIO ASC  LIMIT 1;
 
 #### 4º Liste o nome de todos os funcionários é o nome de seus respectivos departamentos.
 Solução:
-```
+```sql
 SELECT 
     NOME_FUNCIONARIO, 
     COALESCE(NOME_DEPARTAMENTO, 'SEM DEPARTAMENTO')
@@ -51,7 +51,7 @@ FROM FUNCIONARIOS F
 
 #### 5º Liste a média salarial entre todos os funcionários.
 Solução:
-```
+```sql
 SELECT 
     AVG(SALARIO) AS MEDIA_SALARIAL_AVG, 
     (SUM(SALARIO) / COUNT(DISTINCT ID_FUNCIONARIO)) AS MEDIA_SALARIAL_CALCULADA
@@ -60,7 +60,7 @@ FROM FUNCIONARIOS F;
 
 #### 6º Atualize o salário do funcionário João para R$ 2000.
 Solução:
-```
+```sql
 UPDATE FUNCIONARIOS 
 SET SALARIO = 2000
 WHERE ID_FUNCIONARIO = 1
@@ -68,7 +68,7 @@ WHERE ID_FUNCIONARIO = 1
 
 #### 7º Faça uma subquery para listar todos os funcionários que são do departamento “Desenvolvedor”.
 Solução:
-```
+```sql
 SELECT * 
 FROM FUNCIONARIOS 
 WHERE DEPARTAMENTO_ID = (
@@ -81,7 +81,7 @@ WHERE DEPARTAMENTO_ID = (
 
 #### 8º Incrementar ao modelo uma tabela para endereço e outra para telefone, insira algumas informações e em seguida faça a relação (foreign key) com a tabela de "funcionarios".
 Solução para tabela endereço:
-```
+```sql
 CREATE TABLE endereco (
     id_endereco SERIAL PRIMARY KEY,
     rua VARCHAR(100) NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE endereco (
 );
 ```
 Solução para tabela telefone:
-```
+```sql
 CREATE TABLE telefone (
     id_telefone SERIAL PRIMARY KEY,
     numero VARCHAR(20) NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE telefone (
 
 #### 9º Um funcionário pode ter mais do que um endereço e um endereço pode pertencer a mais do que um funcionário, liste os endereços com mais de um funcionário e funcionários com mais de um endereço.
 Solução vinculo entre Funcionário e Endereço:
-```
+```sql
 CREATE TABLE funcionario_endereco (
     funcionario_id INTEGER,
     endereco_id INTEGER,
@@ -114,7 +114,7 @@ CREATE TABLE funcionario_endereco (
 ```
 
 Solução para listar os funcionários com mais de 1 endereço:
-```
+```sql
 SELECT 
     E.*, 
     COUNT(FE.FUNCIONARIO_ID) AS QTD_FUNCIONARIOS
@@ -125,7 +125,7 @@ HAVING COUNT(FE.FUNCIONARIO_ID) > 1;
 ```
 
 Solução para listar endereços com mais de 1 funcionário:
-```
+```sql
 SELECT 
     F.*, 
     COUNT(FE.ENDERECO_ID) AS QTD_ENDERECOS
@@ -137,7 +137,7 @@ HAVING COUNT(FE.ENDERECO_ID) > 1;
 
 #### 10º Faça uma query que retorne a porcentagem de funcionários cadastrados nos últimos 30 dias .
 Solução:
-```
+```sql
 SELECT 
     (COUNT(*) * 100.0) / (SELECT COUNT(*) FROM funcionarios) AS percentual
 FROM funcionarios
@@ -147,16 +147,16 @@ WHERE dh_criacao >= CURRENT_DATE - INTERVAL '30 days';
 #### 11º Crie uma Procedure que receba como parâmetro os campos da tabela “funcionarios” e em seguida insira dois novos funcionários com dados fictícios.
 
 Para garantir que o ID seja incrementado corretamente, é necessário ajustar a sequência do campo id_funcionario, que por padrão é nomeada como funcionarios_id_funcionario_seq seguindo o formato:
-```
+```sql
 <nome_da_tabela>_<nome_da_coluna>_seq
 ```
 O ajuste pode ser feito com o seguinte comando:
-```
+```sql
 SELECT setval('funcionarios_id_funcionario_seq', (SELECT MAX(id_funcionario) FROM funcionarios));
 ```
 
 Solução:
-```
+```sql
 CREATE OR REPLACE PROCEDURE adicionar_funcionarios(
     new_nome VARCHAR, new_salario INTEGER, new_departamento_id INTEGER
 ) LANGUAGE plpgsql AS $$
@@ -168,7 +168,7 @@ $$;
 ```
 
 Adicionar 2 funcionarios com a procedure:
-```
+```sql
 CALL adicionar_funcionarios('Mauro', 3500, 2);
 CALL adicionar_funcionarios('Roger', 2500, 1);
 ```
